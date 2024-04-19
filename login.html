@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css" >
+</head>
+<body>
+
+<header class="header-login">
+    <h1>Login Page</h1>
+</header>
+
+<div class="container">
+    <h2>Welcome to the System!</h2>
+    <p>Are you logging in as an owner or a coworker?</p>
+    <div class="login-options">
+        <div>
+            <input type="radio" id="ownerRadio" name="loginType" value="owner">
+            <label for="ownerRadio">Owner</label>
+        </div>
+        <div>
+            <input type="radio" id="coworkerRadio" name="loginType" value="coworker">
+            <label for="coworkerRadio">Coworker</label>
+        </div>
+    </div>
+    <button id="loginBtn">Login</button>
+</div>
+
+<footer class="footer-login">
+    <p>&copy; 2024 Company. All rights reserved.</p>
+</footer>
+
+<script>
+    document.getElementById("loginBtn").addEventListener("click", function(event) {
+        event.preventDefault(); 
+
+        var loginType = document.querySelector('input[name="loginType"]:checked');
+        if (loginType) {
+            if (loginType.value === "owner") {
+                console.log("Owner login selected.");
+                window.location.href = "owner.html"; 
+                document.querySelector('.header-login').style.backgroundColor = '#007bff'; 
+                document.querySelector('.footer-login').style.backgroundColor = '#0056b3'; 
+            } else if (loginType.value === "coworker") {
+                console.log("Coworker login selected.");
+                window.location.href = "employee.html"; l
+            }
+        } else {
+            alert("Please select a login type.");
+        }
+    });
+</script>
+
+</body>
+</html>

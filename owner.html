@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="owner.css">
+</head>
+<body>
+    <h1>Owner Dashboard</h1>
+    <h2>Add New Item</h2>
+    Name: <input type="text" id="name"><br>
+    Price: <input type="text" id="price"><br>
+    Picture URL: <input type="text" id="picture"><br>
+    Location: <input type="text" id="location"><br>
+    Description: <textarea id="description"></textarea><br>
+    <button onclick="addItem()">Add Item</button>
+
+    <h2>Items List</h2>
+    <ul id="itemsList"></ul>
+
+    <script>
+        function fetchItems() {
+            axios.get('http://localhost:8080/items?userType=owner')
+                .then(response => {
+                    const items = response.data;
+                    const list = document.getElementById('itemsList');
+                    list.innerHTML = '';
+                    items.forEach(item => {
+                        const itemElement = document.createElement('li');
+                        itemElement.innerHTML = `<strong>Name:</strong> ${item.name}, <strong>Price:</strong> ${item.price}, 
+                                                 <img src="${item.picture}" alt="Item Picture" width="100"><br>
+                                                 <strong>Location:</strong> ${item.location}, <strong>Description:</strong> ${item.description},
+                                                 <strong>Ratings:</strong> ${item.ratings.join(", ") || "No ratings yet"}
+                                                 <button onclick="editItem(${item.id})">Edit</button>
+                                                 <button onclick="deleteItem(${item.id})">Delete</button>`;
+                        list.appendChild(itemElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        }
+
+        function addItem() {
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const picture = document.getElementById('picture').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+            axios.post('http://localhost:8080/items?userType=owner', { name, price, picture, location, description })
+                .then(response => {
+                    console.log('Item added:', response.data);
+                    fetchItems();  
+                })
+                .catch(error => console.error('Error adding item:', error));
+        }
+
+        function editItem(id) {
+            const newName = prompt("Enter the new name for the item:");
+            const newPrice = prompt("Enter the new price for the item:");
+            const newPicture = prompt("Enter the new URL for the picture:");
+            const newLocation = prompt("Enter the new location:");
+            const newDescription = prompt("Enter the new description:");
+            axios.put(`http://localhost:8080/items/${id}?userType=owner`, { name: newName, price: newPrice, picture: newPicture, location: newLocation, description: newDescription })
+                .then(response => {
+                    console.log('Item updated:', response.data);
+                    fetchItems();  
+                })
+                .catch(error => console.error('Error updating item:', error));
+        }
+
+        function deleteItem(id) {
+            axios.delete(`http://localhost:8080/items/${id}?userType=owner`)
+                .then(response => {
+                    console.log('Item deleted');
+                    fetchItems();  
+                })
+                .catch(error => console.error('Error deleting item:', error));
+        }
+
+        fetchItems();  
+    </script>
+</body>
+</html>
